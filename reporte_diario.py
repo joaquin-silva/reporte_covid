@@ -20,23 +20,23 @@ def obtener_casos_nuevos_totales():
     df['Casos nuevos totales media móvil'] = df['Casos nuevos totales'].rolling(7).mean()
     return df
 
-def grafico_casos(df_totales):
+def grafico_casos(df_totales, column):
     # Datoss
     data = df_totales[-28:]
     # Figura
     sns.set_style('darkgrid')
     fig, ax = plt.subplots(figsize=(12,8))
-    ax.plot(data['Fecha'], data['Casos nuevos totales media móvil'], color='red', label='Media móvil 7 días')
-    ax.bar(data['Fecha'], data['Casos nuevos totales'], label='Casos nuevos')
+    ax.plot(data['Fecha'], data[f'{column} media móvil'], color='red', label='Media móvil 7 días')
+    ax.bar(data['Fecha'], data[column], label=column)
     # Formato
     format = mdates.DateFormatter("%d-%m-%Y")
     ax.xaxis.set_major_formatter(format)
     current_values = plt.gca().get_yticks()
     plt.gca().set_yticklabels(['{:,.0f}'.format(x).replace(",",".") for x in current_values])
     # Títulos
-    plt.title('Casos nuevos confirmados COVID-19')
+    plt.title(f'{column} COVID-19')
     plt.xlabel('Fecha')
-    plt.ylabel('Casos nuevos')
+    plt.ylabel(column)
     plt.legend()
     return fig
 
