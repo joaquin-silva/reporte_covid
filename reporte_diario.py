@@ -18,6 +18,7 @@ def obtener_casos_nuevos_totales():
     series = df["Fallecidos"]
     df["Fallecidos"] = help(df['Fallecidos']).astype(int)
     df['Casos nuevos totales media móvil'] = df['Casos nuevos totales'].rolling(7).mean()
+    df['Fallecidos media móvil'] = df['Fallecidos'].rolling(7).mean()
     return df
 
 def grafico_casos(df_totales, column):
