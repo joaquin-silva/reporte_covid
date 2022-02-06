@@ -40,8 +40,8 @@ def grafico_casos(df_totales):
     plt.legend()
     return fig
 
-def casos_por_semana(data):
-    pivot = pd.pivot(data, index=["Año","Semana"], columns="Número día", values="Casos nuevos totales")
+def datos_por_semana(data, column):
+    pivot = pd.pivot(data, index=["Año","Semana"], columns="Número día", values=column)
     pivot = pivot.loc[pivot.index[-5:],]
     pivot.columns = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"]
     pivot = pivot.fillna(0)

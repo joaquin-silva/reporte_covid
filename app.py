@@ -21,8 +21,12 @@ st.markdown(f"""
 """)
 
 st.header('Casos Nuevos por Semana')
-pivot = casos_por_semana(data)
-# pivot = pivot.applymap(lambda x: "{:,d}".format(x).replace(",","."))
+pivot = datos_por_semana(data, "Casos nuevos totales")
+cmap = sns.color_palette("YlOrRd", as_cmap=True)
+st.dataframe(pivot.style.background_gradient(cmap=cmap))
+
+st.header('Fallecidos Nuevos por Semana')
+pivot = datos_por_semana(data, "Fallecidos")
 cmap = sns.color_palette("YlOrRd", as_cmap=True)
 st.dataframe(pivot.style.background_gradient(cmap=cmap))
 
