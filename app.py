@@ -20,20 +20,17 @@ st.markdown(f"""
     * Fallecidos: {fallecidos_nuevos}
 """)
 
-st.header('Casos Nuevos por Semana')
-pivot = datos_por_semana(data, "Casos nuevos totales")
+st.header('Visualizaciones')
+
+option = st.selectbox(
+     'Seleccione un dato',
+     ('Casos nuevos totales', 'Fallecidos'))
+
+st.header(f'{option} por Semana')
+pivot = datos_por_semana(data, option)
 cmap = sns.color_palette("YlOrRd", as_cmap=True)
 st.dataframe(pivot.style.background_gradient(cmap=cmap))
 
-st.header('Fallecidos Nuevos por Semana')
-pivot = datos_por_semana(data, "Fallecidos")
-cmap = sns.color_palette("YlOrRd", as_cmap=True)
-st.dataframe(pivot.style.background_gradient(cmap=cmap))
-
-st.header('Gráfico Casos Nuevos')
-fig = grafico_casos(data, "Casos nuevos totales")
-st.pyplot(fig)
-
-st.header('Gráfico Fallecidos Nuevos')
-fig = grafico_casos(data, "Fallecidos")
+st.header(f'Evolución {option}')
+fig = grafico_casos(data, option)
 st.pyplot(fig)
