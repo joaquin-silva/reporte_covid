@@ -26,11 +26,11 @@ option = st.selectbox(
      'Seleccione un dato',
      ('Casos nuevos totales', 'Fallecidos'))
 
-st.header(f'{option} por Semana')
+st.subheader(f'{option} por Semana')
 pivot = datos_por_semana(data, option)
 cmap = sns.color_palette("YlOrRd", as_cmap=True)
 st.dataframe(pivot.style.background_gradient(cmap=cmap))
 
-st.header(f'Evolución {option}')
+st.subheader(f'Evolución {option.lower()}')
 fig = grafico_casos(data, option)
 st.pyplot(fig)
