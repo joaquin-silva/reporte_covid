@@ -8,6 +8,12 @@ import seaborn as sns
 def help(series):
     return np.append(series[0], [series[i]-series[i-1] for i in range(1, len(series))])
 
+def obtener_tipo_pacientes():
+    df = pd.read_csv("https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto24/CamasHospital_Diario_T.csv")
+    df = df.rename(columns={"Tipo de cama":"Fecha", "UCI":"Pacientes UCI"})
+    df["Fecha"] = pd.to_datetime(df["Fecha"])
+    return df
+
 def obtener_casos_nuevos_totales():
     df = pd.read_csv("https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales_T.csv")
     df["Fecha"] = pd.to_datetime(df["Fecha"])
@@ -15,10 +21,17 @@ def obtener_casos_nuevos_totales():
     df["Año"] = df["Fecha"].apply(lambda x: x.isocalendar()[0])
     df["Semana"] = df["Fecha"].apply(lambda x: x.isocalendar()[1])
     df["Número día"] = df["Fecha"].apply(lambda x: x.weekday())
-    series = df["Fallecidos"]
     df["Fallecidos"] = help(df['Fallecidos']).astype(int)
-    df['Casos nuevos totales media móvil'] = df['Casos nuevos totales'].rolling(7).mean()
-    df['Fallecidos media móvil'] = df['Fallecidos'].rolling(7).mean()
+    return df
+
+def obtener_datos():
+    df_casos = obtener_casos_nuevos_totales()
+    df_pacientes = obtener_tipo_pacientes()
+    df = df_casos.join(df_pacientes.set_index("Fecha"), on="Fecha")
+
+    for column in ["Casos nuevos totales", "Fallecidos", "Pacientes UCI"]:
+        df[column + " media móvil"] = df[column].rolling(7).mean()
+
     return df
 
 def grafico_casos(df_totales, column):
@@ -48,3 +61,24 @@ def datos_por_semana(data, column):
     pivot = pivot.fillna(0)
     pivot = pivot.astype(int)
     return pivot
+
+def obtener_dato(data, column, pos):
+    return "{:,d}".format(int(data[column][pos])).replace(",",".")
+
+def obtener_variacion(nuevo, original):
+    variacion = float(nuevo)/float(original) - 1
+    return "{:.1%}".format(variacion)
+
+def obtener_fila(column, data):
+    valor = obtener_dato(data, column, data.shape[0]-1)
+    media_movil = obtener_dato(data, column + " media móvil", data.shape[0]-1)
+    variacion_7dias = obtener_variacion(valor, obtener_dato(data, column, data.shape[0]-8))
+    variacion_7dias_mm = obtener_variacion(media_movil, obtener_dato(data, column + " media móvil", data.shape[0]-8))
+    return [column, valor, media_movil, variacion_7dias, variacion_7dias_mm]
+
+def obtener_resumen(data):
+    df = pd.DataFrame(columns=["Dato","Valor Reportado","Media Móvil","Variación 7 días","Variación Media Móvil"])
+    df.loc[0] = obtener_fila('Casos nuevos totales', data)
+    df.loc[1] = obtener_fila('Fallecidos', data)
+    df.loc[2] = obtener_fila('Pacientes UCI', data)
+    return df
