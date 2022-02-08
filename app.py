@@ -4,7 +4,7 @@ from reporte_diario import *
 
 cmap = sns.color_palette("YlOrRd", as_cmap=True)
 
-st.title('Reporte COVID-19 Chile')
+st.title('COVID-19 Chile')
 
 data = obtener_datos()
 df = obtener_resumen(data)
