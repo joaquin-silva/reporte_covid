@@ -63,11 +63,13 @@ def datos_por_semana(data, column):
     return pivot
 
 def obtener_dato(data, column, pos):
-    return "{:,d}".format(int(data[column][pos])).replace(",",".")
+    return int(data[column][pos])
+    # return "{:,d}".format(int(data[column][pos])).replace(",",".")
 
 def obtener_variacion(nuevo, original):
     variacion = float(nuevo)/float(original) - 1
-    return "{:.1%}".format(variacion)
+    return variacion
+    # return "{:.1%}".format(variacion)
 
 def obtener_fila(column, data):
     valor = obtener_dato(data, column, data.shape[0]-1)
